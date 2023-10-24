@@ -58,16 +58,17 @@ public class Main {
 
         run(repo, prieteni);
     }
-    public static void run(InMemoryRepository<Long, Utilizator> utilizatori, PrietenieService prieteni){
+
+    public static void run(InMemoryRepository<Long, Utilizator> utilizatori, PrietenieService prieteni) {
         Scanner sc = new Scanner(System.in);
         boolean iesire = false;
 
         System.out.println("Bine ati venit in aplicatie!");
 
-        while(!iesire){
+        while (!iesire) {
             afisareMeniuPrincipal();
             int choice = sc.nextInt();
-            switch(choice){
+            switch (choice) {
                 case 1:
                     afisareUtilizatori(utilizatori);
                     break;
@@ -86,6 +87,9 @@ public class Main {
                 case 6:
                     stergePrietenie(prieteni);
                     break;
+                case 7:
+                    afiseazaCeaMaiSociabilaComunitate(prieteni);
+                    break;
                 case 9:
                     afisareNrComunitati(prieteni);
                     break;
@@ -98,7 +102,15 @@ public class Main {
             }
         }
     }
-    private static void stergePrietenie(PrietenieService prieteni){;
+
+    private static void afiseazaCeaMaiSociabilaComunitate(InMemoryRepository<Long, Utilizator> utilizatori, PrietenieService prieteni) {
+        for (Long id : prieteni.mostSociableCommunity()) {
+            System.out.println(utilizatori.findOne(id));
+        }
+    }
+
+    private static void stergePrietenie(PrietenieService prieteni) {
+        ;
         afisarePrietenii(prieteni);
         Scanner sc = new Scanner(System.in);
         System.out.print("Dati id primului prieten: ");
@@ -107,31 +119,33 @@ public class Main {
         System.out.print("Dati id celui de-al doilea prieten: ");
         Long id2 = sc.nextLong();
 
-        if(prieteni.findOne(new Tuple<>(id1, id2)) == null){
+        if (prieteni.findOne(new Tuple<>(id1, id2)) == null) {
             System.out.println("Nu a fost gasita aceasta prietenie!");
             return;
         }
         prieteni.delete(new Tuple<>(id1, id2));
     }
-    private static void adaugaPrietenie(InMemoryRepository<Long, Utilizator> utilizatori, PrietenieService prieteni){
+
+    private static void adaugaPrietenie(InMemoryRepository<Long, Utilizator> utilizatori, PrietenieService prieteni) {
         afisareUtilizatori(utilizatori);
         Scanner sc = new Scanner(System.in);
         System.out.print("Dati id primului utilizator: ");
         Long id1 = sc.nextLong();
-        if(utilizatori.findOne(id1) == null){
+        if (utilizatori.findOne(id1) == null) {
             System.out.println("Nu a fost gasit utilizatorul!");
             return;
         }
         System.out.print("Dati id celui de-al doilea utilizator: ");
         Long id2 = sc.nextLong();
-        if(utilizatori.findOne(id2) == null){
+        if (utilizatori.findOne(id2) == null) {
             System.out.println("Nu a fost gasit utilizatorul!");
             return;
         }
 
         prieteni.save(new Prietenie(id1, id2));
     }
-    private static void stergeUtilizator(InMemoryRepository<Long, Utilizator> utilizatori){
+
+    private static void stergeUtilizator(InMemoryRepository<Long, Utilizator> utilizatori) {
         afisareUtilizatori(utilizatori);
         Scanner sc = new Scanner(System.in);
         System.out.print("Dati id care trebuie sters: ");
@@ -143,15 +157,17 @@ public class Main {
         }
         System.out.println("Utilizatorul a fost sters cu succes!");
     }
-    private static void adaugaUtilizator(InMemoryRepository<Long, Utilizator> utilizatori){
+
+    private static void adaugaUtilizator(InMemoryRepository<Long, Utilizator> utilizatori) {
         Utilizator u = citesteUtilizator();
         try {
             utilizatori.save(u);
-        }catch(ValidationException ex){
+        } catch (ValidationException ex) {
             System.out.println(ex.getMessage());
         }
     }
-    private static Utilizator citesteUtilizator(){
+
+    private static Utilizator citesteUtilizator() {
         Scanner sc = new Scanner(System.in);
         System.out.print("Dati id utilizator: ");
         Long id = sc.nextLong();
@@ -165,20 +181,24 @@ public class Main {
         u.setId(id);
         return u;
     }
-    private static void afisareNrComunitati(PrietenieService prieteni){
+
+    private static void afisareNrComunitati(PrietenieService prieteni) {
         System.out.println("Numarul de comunitati este: " + prieteni.numarComunitati());
     }
-    private static void afisareUtilizatori(InMemoryRepository<Long, Utilizator> utilizatori){
-        for(Utilizator i : utilizatori.findAll()){
+
+    private static void afisareUtilizatori(InMemoryRepository<Long, Utilizator> utilizatori) {
+        for (Utilizator i : utilizatori.findAll()) {
             System.out.println(i);
         }
     }
-    private static void afisarePrietenii(PrietenieService prieteni){
-        for(Prietenie i : prieteni.findAll()){
+
+    private static void afisarePrietenii(PrietenieService prieteni) {
+        for (Prietenie i : prieteni.findAll()) {
             System.out.println(i);
         }
     }
-    private static void afisareMeniuPrincipal(){
+
+    private static void afisareMeniuPrincipal() {
         System.out.println("Meniu principal:");
         System.out.println("1. Afisare utilizatori");
         System.out.println("2. Afisare prietenii");
@@ -186,6 +206,7 @@ public class Main {
         System.out.println("4. Sterge utilizator");
         System.out.println("5. Adauga prietenie");
         System.out.println("6. Sterge prietenie");
+        System.out.println("7. Afiseaza cea mai sociabila comunitate");
 
         System.out.println("9. Afisare numar comunitati");
         System.out.println("0. Iesire");

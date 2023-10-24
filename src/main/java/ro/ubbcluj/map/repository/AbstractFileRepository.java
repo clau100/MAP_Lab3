@@ -10,8 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-
-public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends InMemoryRepository<ID,E> {
+public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends InMemoryRepository<ID, E> {
     String fileName;
 
     public AbstractFileRepository(String fileName, Validator<E> validator) {
