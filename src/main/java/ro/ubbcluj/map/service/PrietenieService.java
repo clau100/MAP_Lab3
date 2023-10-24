@@ -10,49 +10,79 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class PrietenieService extends InMemoryRepository<Tuple<Long, Long>, Prietenie>{
+public class PrietenieService extends InMemoryRepository<Tuple<Long, Long>, Prietenie> {
     public PrietenieService(Validator<Prietenie> validator) {
         super(validator);
     }
-    public int numarComunitati(){
-        Map<Long, Boolean> visited = new HashMap<>();
-        Map<Long, List<Long>> prieteni = new HashMap<>();
-        for(Prietenie i : this.findAll()){
+
+    private Map<Long, Boolean> visited;
+    private Map<Long, List<Long>> prieteni;
+
+    private void makeLists() {
+        visited = new HashMap<>();
+        prieteni = new HashMap<>();
+        for (Prietenie i : this.findAll()) {
             // Marcam ca nevizitati
             visited.put(i.getId().getLeft(), false);
             visited.put(i.getId().getRight(), false);
 
             // Construim listele de adiacenta
-            if(!prieteni.containsKey(i.getId().getLeft())){
+            if (!prieteni.containsKey(i.getId().getLeft())) {
                 prieteni.put(i.getId().getLeft(), new LinkedList<>());
             }
             prieteni.get(i.getId().getLeft()).add(i.getId().getRight());
 
-            if(!prieteni.containsKey(i.getId().getRight())){
+            if (!prieteni.containsKey(i.getId().getRight())) {
                 prieteni.put(i.getId().getRight(), new LinkedList<>());
             }
             prieteni.get(i.getId().getRight()).add(i.getId().getLeft());
         }
+    }
 
+    public int numarComunitati() {
+        makeLists();
         int count = 0;
-        for(Long i : visited.keySet()){
-            if(!visited.get(i)){
+        for (Long i : visited.keySet()) {
+            if (!visited.get(i)) {
                 count++;
-                DFS(i, visited, prieteni);
+                DFS(i);
             }
         }
         return count;
     }
-    public List<Long> mostSociableCommunity(){
-        List<Long> community = new LinkedList<>();
-        
-        return community;
-    }
-    private void DFS(Long n, Map<Long, Boolean> visited, Map<Long, List<Long>> prieteni){
+
+    private void DFS(Long n) {
         visited.put(n, true);
-        for(Long i : prieteni.get(n)){
+        for (Long i : prieteni.get(n)) {
+            if (!visited.get(i)) {
+                DFS(i);
+            }
+        }
+    }
+
+    public LinkedList<Long> mostSociableCommunity() {
+
+        LinkedList<Long> maximum = new LinkedList<>();
+        makeLists();
+
+        for (Long i : visited.keySet()) {
+            LinkedList<Long> community = new LinkedList<>();
+            DFSSpecial(community, i);
+            if(community.size() > maximum.size()){
+                maximum = community;
+            }
+        }
+
+        return maximum;
+    }
+
+    private void DFSSpecial(LinkedList<Long> currentPath, Long n) {
+        visited.put(n, true);
+        currentPath.add(n);
+
+        for(Long i: prieteni.get(n)){
             if(!visited.get(i)){
-                DFS(i, visited, prieteni);
+                DFSSpecial(currentPath, i);
             }
         }
     }

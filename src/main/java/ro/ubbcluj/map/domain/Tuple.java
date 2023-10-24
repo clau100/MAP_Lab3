@@ -5,6 +5,7 @@ import java.util.Objects;
 
 /**
  * Define a Tuple o generic type entities
+ *
  * @param <E1> - tuple first entity type
  * @param <E2> - tuple second entity type
  */

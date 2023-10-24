@@ -3,23 +3,25 @@ package ro.ubbcluj.map.repository;
 import ro.ubbcluj.map.domain.Entity;
 import ro.ubbcluj.map.domain.validators.Validator;
 
+import javax.print.attribute.standard.MediaSize;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<ID,E> {
+public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<ID, E> {
     private Validator<E> validator;
-    Map<ID,E> entities;
+    Map<ID, E> entities;
 
     public InMemoryRepository(Validator<E> validator) {
         this.validator = validator;
-        entities=new HashMap<ID,E>();
+        entities = new HashMap<ID, E>();
     }
 
     @Override
-    public E findOne(ID id){
-        if (id==null)
+    public Optional<E> findOne(ID id) {
+        if (id == null)
             throw new IllegalArgumentException("id must be not null");
-        return entities.get(id);
+        return Optional.ofNullable(entities.get(id));
     }
 
     @Override
@@ -28,39 +30,33 @@ public class InMemoryRepository<ID, E extends Entity<ID>> implements Repository<
     }
 
     @Override
-    public E save(E entity) {
-        if (entity==null)
-            throw new IllegalArgumentException("entity must be not null");
-        validator.validate(entity);
-        if(entities.get(entity.getId()) != null) {
-            return entity;
-        }
-        else entities.put(entity.getId(),entity);
-        return null;
-    }
-
-    @Override
-    public E delete(ID id) {
-        if(id == null){
+    public Optional<E> save(E entity) {
+        if(entity == null){
             throw new IllegalArgumentException("id must not be null");
         }
-        return entities.remove(id);
+        validator.validate(entity);
+        return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity));
     }
 
     @Override
-    public E update(E entity) {
+    public Optional<E> delete(ID id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id must not be null");
+        }
+        return Optional.ofNullable(entities.remove(id));
+    }
 
-        if(entity == null)
+    @Override
+    public Optional<E> update(E entity) {
+
+        if (entity == null)
             throw new IllegalArgumentException("entity must be not null!");
         validator.validate(entity);
 
-        entities.put(entity.getId(),entity);
-
-        if(entities.get(entity.getId()) != null) {
-            entities.put(entity.getId(),entity);
-            return null;
+        if (entities.get(entity.getId()) != null) {
+            entities.put(entity.getId(), entity);
+            return Optional.empty();
         }
-        return entity;
-
+        return Optional.of(entity);
     }
 }
