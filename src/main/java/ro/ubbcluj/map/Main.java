@@ -111,7 +111,6 @@ public class Main {
     }
 
     private static void stergePrietenie(PrietenieService prieteni) {
-        ;
         afisarePrietenii(prieteni);
         Scanner sc = new Scanner(System.in);
         System.out.print("Dati id primului prieten: ");
@@ -120,7 +119,7 @@ public class Main {
         System.out.print("Dati id celui de-al doilea prieten: ");
         Long id2 = sc.nextLong();
 
-        if (prieteni.findOne(new Tuple<>(id1, id2)) == null) {
+        if (prieteni.findOne(new Tuple<>(id1, id2)).isEmpty()) {
             System.out.println("Nu a fost gasita aceasta prietenie!");
             return;
         }
@@ -132,13 +131,13 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         System.out.print("Dati id primului utilizator: ");
         Long id1 = sc.nextLong();
-        if (utilizatori.findOne(id1) == null) {
+        if (utilizatori.findOne(id1).isEmpty()) {
             System.out.println("Nu a fost gasit utilizatorul!");
             return;
         }
         System.out.print("Dati id celui de-al doilea utilizator: ");
         Long id2 = sc.nextLong();
-        if (utilizatori.findOne(id2) == null) {
+        if (utilizatori.findOne(id2).isEmpty()) {
             System.out.println("Nu a fost gasit utilizatorul!");
             return;
         }

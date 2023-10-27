@@ -36,13 +36,15 @@ public class Tuple<E1, E2> {
 
     @Override
     public String toString() {
-        return "" + e1 + "," + e2;
+        return e1 + "," + e2;
 
     }
 
     @Override
     public boolean equals(Object obj) {
-        return this.e1.equals(((Tuple) obj).e1) && this.e2.equals(((Tuple) obj).e2);
+        if(!(obj instanceof Tuple))
+            return false;
+        return this.e1.equals(((Tuple<?, ?>) obj).e1) && this.e2.equals(((Tuple<?, ?>) obj).e2);
     }
 
     @Override

@@ -31,8 +31,6 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
                 super.save(entity);
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,6 +53,7 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
      * creates an entity of type E having a specified list of @code attributes
      *
      * @param attributes
+     * attributes of the given entity
      * @return an entity of type E
      */
     public abstract E extractEntity(List<String> attributes);  //Template Method
@@ -76,8 +75,6 @@ public abstract class AbstractFileRepository<ID, E extends Entity<ID>> extends I
             writer.write(createEntityAsString(entity));
             writer.newLine();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
