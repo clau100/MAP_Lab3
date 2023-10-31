@@ -36,10 +36,9 @@ public class Utilizator extends Entity<Long> {
 
     @Override
     public String toString() {
-        return "Utilizator{" +
+        return  super.toString() + "Utilizator{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", friends=" + friends +
                 '}';
     }
 

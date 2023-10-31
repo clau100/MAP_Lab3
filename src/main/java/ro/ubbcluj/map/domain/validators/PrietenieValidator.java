@@ -5,6 +5,7 @@ import ro.ubbcluj.map.domain.Prietenie;
 import java.util.Objects;
 
 public class PrietenieValidator implements Validator<Prietenie> {
+    // Class that validates Prietenie
 
     @Override
     public void validate(Prietenie entity) throws ValidationException {

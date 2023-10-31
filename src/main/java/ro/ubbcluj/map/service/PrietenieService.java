@@ -1,9 +1,9 @@
 package ro.ubbcluj.map.service;
 
+import ro.ubbcluj.map.domain.Prietenie;
+import ro.ubbcluj.map.domain.Tuple;
 import ro.ubbcluj.map.domain.validators.Validator;
 import ro.ubbcluj.map.repository.InMemoryRepository;
-import ro.ubbcluj.map.domain.Tuple;
-import ro.ubbcluj.map.domain.Prietenie;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -85,5 +85,9 @@ public class PrietenieService extends InMemoryRepository<Tuple<Long, Long>, Prie
                 DFSSpecial(currentPath, i);
             }
         }
+    }
+    public Map<Long, List<Long>> getPrieteni(){
+        makeLists();
+        return prieteni;
     }
 }

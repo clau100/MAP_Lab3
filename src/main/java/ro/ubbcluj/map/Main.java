@@ -9,8 +9,8 @@ import ro.ubbcluj.map.domain.validators.ValidationException;
 import ro.ubbcluj.map.repository.InMemoryRepository;
 import ro.ubbcluj.map.service.PrietenieService;
 
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Main {
 
@@ -80,7 +80,7 @@ public class Main {
                     adaugaUtilizator(utilizatori);
                     break;
                 case 4:
-                    stergeUtilizator(utilizatori);
+                    stergeUtilizator(utilizatori, prieteni);
                     break;
                 case 5:
                     adaugaPrietenie(utilizatori, prieteni);
@@ -90,6 +90,9 @@ public class Main {
                     break;
                 case 7:
                     afiseazaCeaMaiSociabilaComunitate(utilizatori, prieteni);
+                    break;
+                case 8:
+                    afiseazaUtilizatoriDupaNrPrieteni(utilizatori, prieteni);
                     break;
                 case 9:
                     afisareNrComunitati(prieteni);
@@ -101,6 +104,26 @@ public class Main {
                     System.out.println("Optiunea este nevalida!");
                     break;
             }
+        }
+    }
+
+    private static void afiseazaUtilizatoriDupaNrPrieteni(InMemoryRepository<Long, Utilizator> utilizatori, PrietenieService prieteni) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Dati numarul de prieteni dupa care se cauta: ");
+        int n = sc.nextInt();
+        AtomicBoolean found = new AtomicBoolean(false);
+        Map<Long, List<Long>> prietenii = prieteni.getPrieteni();
+        prietenii.forEach((user, friendList) -> {
+            if (friendList.size() >= n) {
+                if (utilizatori.findOne(user).isPresent()) {
+                    found.set(true);
+                    Utilizator util = utilizatori.findOne(user).get();
+                    System.out.println(util + ": " + friendList.size());
+                }
+            }
+        });
+        if (!found.get()) {
+            System.out.println("Niciun utilizator nu are cel putin " + n + " prietenii");
         }
     }
 
@@ -145,7 +168,7 @@ public class Main {
         prieteni.save(new Prietenie(id1, id2));
     }
 
-    private static void stergeUtilizator(InMemoryRepository<Long, Utilizator> utilizatori) {
+    private static void stergeUtilizator(InMemoryRepository<Long, Utilizator> utilizatori, PrietenieService prieteni) {
         afisareUtilizatori(utilizatori);
         Scanner sc = new Scanner(System.in);
         System.out.print("Dati id care trebuie sters: ");
@@ -154,6 +177,15 @@ public class Main {
         if (u.isEmpty()) {
             System.out.println("Utilizatorul cu id cerut nu a fost gasit!");
             return;
+        }
+        LinkedList<Prietenie> deSters = new LinkedList<>();
+        for(Prietenie p : prieteni.findAll()){
+            if(p.getId().getLeft() == u.get().getId() || p.getId().getRight() == u.get().getId()){
+                deSters.add(p);
+            }
+        }
+        for(Prietenie p : deSters){
+            prieteni.delete(p.getId());
         }
         System.out.println("Utilizatorul a fost sters cu succes!");
     }
@@ -207,7 +239,7 @@ public class Main {
         System.out.println("5. Adauga prietenie");
         System.out.println("6. Sterge prietenie");
         System.out.println("7. Afiseaza cea mai sociabila comunitate");
-
+        System.out.println("8. Gaseste utilizatorii cu cel putin N prietenii");
         System.out.println("9. Afisare numar comunitati");
         System.out.println("0. Iesire");
         System.out.print("Optiunea aleasa de dvs. este: ");
